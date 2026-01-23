@@ -1,0 +1,18 @@
+# Виртуальное окружение (то самое, где лежат bin, lib, include)
+.venv/
+bin/
+include/
+lib/
+share/
+pyvenv.cfg
+
+# Временные файлы Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Результаты (оставляем твое правило)
+results/
+
+# Системные файлы macOS
+.DS_Store

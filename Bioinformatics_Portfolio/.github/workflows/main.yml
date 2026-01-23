@@ -1,0 +1,50 @@
+name: Bioinformatics Pipeline
+
+# Запускать процесс при каждом пуше в репозиторий
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # --- Настройка Python ---
+    - name: Set up Python 3.14
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.14-dev" # Используем самую свежую версию
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+    - name: Run DNA Analysis (Python)
+      run: python scripts/dna.py
+
+    # --- Настройка R ---
+    - name: Set up R
+      uses: r-lib/actions/setup-r@v2
+      with:
+        use-public-rspm: true
+
+    - name: Install R dependencies
+      run: |
+        Rscript -e "install.packages('ggplot2')"
+
+    - name: Generate Visualization (R)
+      run: Rscript scripts/visualize_dna.R
+
+    # --- Проверка результата ---
+    - name: Check if plot exists
+      run: |
+        if [ -f results/dna_distribution.png ]; then
+          echo "Success: Plot generated!"
+        else
+          echo "Error: Plot missing!"
+          exit 1
+        fi
+

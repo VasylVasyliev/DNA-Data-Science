@@ -1,0 +1,10 @@
+streamlit==1.31.0
+altair==4.2.2
+pandas
+biopython
+fpdf
+plotly
+scipy
+numpy
+matplotlib
+lxml
