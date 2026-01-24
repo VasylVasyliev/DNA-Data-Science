@@ -1,161 +1,160 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import subprocess
-from Bio import Entrez
-from Bio.SeqUtils import gc_fraction
-from langchain_ollama import OllamaLLM
+import ollama
+from Bio import Entrez, SeqIO
+import time
 
-# --- 1. CONFIGURATION ---
-Entrez.email = "vasj5722814@gmail.com" \
-""
+# 1. Настройка страницы
+st.set_page_config(page_title="Bio-Cyber DNA Station", layout="wide")
+Entrez.email = "cyber_bio@example.com"
 
-# --- 2. DYNAMIC OLLAMA MODEL DISCOVERY ---
-def get_installed_ollama_models():
-    """Detects models installed on the user's local machine."""
-    try:
-        result = subprocess.run(['ollama', 'list'], capture_output=True, text=True, check=True)
-        lines = result.stdout.strip().split('\n')[1:]
-        models = [line.split()[0] for line in lines if line]
-        return models if models else ["llama3.2:1b"]
-    except (subprocess.CalledProcessError, FileNotFoundError):
-        return ["llama3.2:1b", "llama3"]
-
-# --- 3. BIOINFORMATICS LOGIC ---
-@st.cache_data
-def fetch_virus_data(input_strings):
-    results = []
-    unique_items = list(set([i.strip() for i in input_strings if i.strip()]))
-    for item in unique_items:
-        try:
-            target_id = None
-            # Search logic for Name or Accession ID
-            if not (item.startswith("NC_") or item.startswith("NM_")):
-                search_term = f"{item}[Organism] AND complete genome AND srcdb_refseq[PROP]"
-                with Entrez.esearch(db="nucleotide", term=search_term, retmax=1) as h:
-                    res = Entrez.read(h)
-                    if res["IdList"]: target_id = res["IdList"][0]
-            else:
-                target_id = item
-
-            if target_id:
-                with Entrez.efetch(db="nucleotide", id=target_id, rettype="gb", retmode="xml") as h:
-                    records = Entrez.read(h)
-                    if records:
-                        rec = records[0]
-                        seq = rec.get('GBSeq_sequence', '').upper()
-                        results.append({
-                            "Virus ID": target_id,
-                            "Molecule": rec.get('GBSeq_moltype', 'N/A').upper(),
-                            "Length (bp)": int(rec.get('GBSeq_length', 0)),
-                            "GC %": round(gc_fraction(seq) * 100, 2) if seq else 0,
-                            "Description": rec.get('GBSeq_definition', 'Unknown'),
-                            "Sequence": seq
-                        })
-        except Exception as e:
-            st.error(f"System Error: {item} -> {e}")
-    return pd.DataFrame(results)
-
-# --- 4. CYBERPANK INTERFACE ---
-st.set_page_config(page_title="Viral Intelligence Station", layout="wide", page_icon="🧬")
-
-# Title and Visual Identity
-st.title("🧬 Viral Intelligence Station")
-
-# Main Instruction Block (Black text on Neon)
-with st.expander("📖 USER MANUAL / SYSTEM PROTOCOL", expanded=True):
-    st.markdown("""
+# Кастомный CSS для стиля, таблицы и анимации
+st.markdown("""
     <style>
-        .cyber-box {
-            background: linear-gradient(90deg, #00ffcc 0%, #0077ff 100%);
-            color: #000000;
-            font-family: 'Segoe UI', sans-serif;
-            font-weight: bold;
-            padding: 20px;
-            border-radius: 5px;
-            border: 2px solid #ff00ff;
-            line-height: 1.5;
-        }
+    .main { background-color: #0a0a0a; color: #39ff14; }
+    div[data-testid="stDataFrame"] td { white-space: nowrap !important; }
+    h2 { color: #00f3ff !important; text-shadow: 0 0 10px #00f3ff; }
+    
+    @keyframes dna-rotate {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    .dna-loader {
+        font-size: 60px;
+        display: inline-block;
+        animation: dna-rotate 2s linear infinite;
+    }
+    /* Медленное вращение для чата */
+    .dna-thinking {
+        font-size: 30px;
+        display: inline-block;
+        animation: dna-rotate 4s linear infinite;
+    }
     </style>
-    <div class="cyber-box">
-        1. AI INITIALIZATION: Ensure <strong>Ollama</strong> is running. Select your model from the "NEURAL CORE" menu.<br>
-        2. DATA ACQUISITION: Select viruses from presets or enter custom IDs. Click "EXECUTE ANALYTICS".<br>
-        3. SEQUENCE ANALYSIS: Review GC-stability and Genome Capacity charts using dark telemetry templates.<br>
-        4. INTELLIGENCE REPORT: Click "GENERATE REPORT" to activate the AI analysis and translation module.<br>
-        5. DATA EXPORT: Save your research batch using the "DOWNLOAD DATASET" button in .FASTA format.
-    </div>
     """, unsafe_allow_html=True)
 
-# Sidebar Configuration
-st.sidebar.header("⚙️ SYSTEM CONFIG")
-installed_models = get_installed_ollama_models()
-final_model = st.sidebar.selectbox("🤖 NEURAL CORE:", options=installed_models)
+def fetch_genome(accession_id):
+    try:
+        with Entrez.efetch(db="nucleotide", id=accession_id, rettype="fasta", retmode="text") as handle:
+            records = list(SeqIO.parse(handle, "fasta"))
+            if not records: return None
+            record = records[0]
+            seq = record.seq
+            L = len(seq)
+            a, t, g, c = (seq.count('A')/L*100), (seq.count('T')/L*100), (seq.count('G')/L*100), (seq.count('C')/L*100)
+            return {
+                "ID": record.id, "Length": L, "GC%": round(g+c, 1),
+                "A%": round(a, 1), "T%": round(t, 1), "G%": round(g, 1), "C%": round(c, 1)
+            }
+    except Exception:
+        return None
 
-virus_presets = {
-    "SARS-CoV-2": "NC_045512", 
-    "Ebola virus": "NC_002549", 
-    "Zika virus": "NC_012532", 
-    "HIV-1": "NC_001802", 
-    "Influenza A": "NC_007374"
-}
-selected = st.sidebar.multiselect("DATA SAMPLES:", options=list(virus_presets.keys()), default=["SARS-CoV-2"])
-custom = st.sidebar.text_input("CUSTOM TARGETS (ID/Name):")
+if 'virus_list' not in st.session_state:
+    st.session_state.virus_list = []
 
-query_list = [virus_presets[name] for name in selected]
-if custom: query_list.extend(custom.split(","))
+st.title("🧬 Bio-Intelligence Cyber-Station")
 
-run_btn = st.sidebar.button("🚀 EXECUTE ANALYTICS")
+col_ctrl, col_main = st.columns([1, 2.5])
 
-# --- DATA VISUALIZATION (CYBER NEON) ---
-if run_btn or 'data' in st.session_state:
-    if run_btn:
-        with st.spinner("📡 SCANNING GLOBAL GENE BANK..."):
-            st.session_state.data = fetch_virus_data(query_list)
+with col_ctrl:
+    st.header("⚙️ CONTROL")
+    try:
+        models = [m['name'] for m in ollama.list()['models']]
+    except: models = ["llama3:latest", "llama3.2:1b"]
+    model_name = st.selectbox("🤖 NEURAL AGENT:", models)
     
-    df = st.session_state.data
-    if not df.empty:
-        st.subheader("📋 RAW DATA LOG")
-        st.dataframe(df.drop(columns=['Sequence']), use_container_width=True, hide_index=True)
+    st.divider()
+    st.subheader("📥 DATA INPUT")
+    new_ids_input = st.text_area("ID (через пробел/запятую):", placeholder="NC_045512, NC_003391", height=100)
+    
+    c1, c2 = st.columns(2)
+    with c1:
+        if st.button("➕ EXECUTE"):
+            raw_ids = list(set(new_ids_input.replace(',', ' ').split())) # Убираем дубликаты из ввода
+            if raw_ids:
+                with st.empty():
+                    st.markdown("<div style='text-align: center;'><div class='dna-loader'>🧬</div><br><b style='color:#39ff14'>Sequencing Data...</b></div>", unsafe_allow_html=True)
+                    
+                    # Очищаем текущий список перед новым расчетом, чтобы избежать дублирования строк
+                    st.session_state.virus_list = [] 
+                    
+                    for acc in raw_ids:
+                        data = fetch_genome(acc)
+                        if data:
+                            st.session_state.virus_list.append(data)
+                    time.sleep(0.5)
+                st.rerun()
+    with c2:
+        if st.button("🗑 RESET"):
+            st.session_state.virus_list = []
+            st.rerun()
 
-        st.divider()
-        col1, col2 = st.columns(2)
+with col_main:
+    st.header("📊 COMPARATIVE ANALYTICS")
+    if st.session_state.virus_list:
+        df = pd.DataFrame(st.session_state.virus_list)
+        neon_pal = ["#00f3ff", "#ff00ff", "#39ff14", "#ffff00"]
         
-        # Neon palette for charts
-        cyber_colors = ['#00ffcc', '#ff00ff', '#0077ff', '#ffcc00']
+        # 1. График длины (Логарифмический)
+        fig_len = px.bar(df, x="ID", y="Length", color="ID", log_y=True,
+                         title="Genome Size (Log Scale)",
+                         color_discrete_sequence=neon_pal, template="plotly_dark", height=300)
+        
+        fig_len.update_layout(
+            plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)',
+            yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.05)', minor_showgrid=False),
+            xaxis=dict(showgrid=False)
+        )
+        st.plotly_chart(fig_len, use_container_width=True)
+        
+        # 2. График состава
+        df_m = df.melt(id_vars=["ID"], value_vars=["A%", "T%", "G%", "C%"])
+        fig_comp = px.bar(df_m, x="ID", y="value", color="variable", barmode="group",
+                          title="Nucleotide Composition (%)",
+                          color_discrete_sequence=neon_pal, template="plotly_dark", height=300)
+        
+        fig_comp.update_layout(
+            plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)',
+            yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.05)', minor_showgrid=False),
+            xaxis=dict(showgrid=False)
+        )
+        st.plotly_chart(fig_comp, use_container_width=True)
+        
+        # 3. Таблица
+        st.subheader("📑 Detailed Sequence Data")
+        st.dataframe(
+            df, 
+            hide_index=True, 
+            use_container_width=True,
+            column_config={
+                "Length": st.column_config.NumberColumn("Size(bp)", format="%d"),
+                "GC%": st.column_config.NumberColumn("GC%", format="%.1f%%"),
+                "A%": "A%", "T%": "T%", "G%": "G%", "C%": "C%"
+            }
+        )
+    else:
+        st.info("Input IDs and press EXECUTE.")
 
-        with col1:
-            st.subheader("🧬 GC-STABILITY SCAN")
-            fig_gc = px.bar(df, x='Virus ID', y='GC %', color='Molecule', 
-                             text='GC %', color_discrete_sequence=cyber_colors,
-                             template="plotly_dark")
-            st.plotly_chart(fig_gc, use_container_width=True)
+st.divider()
 
-        with col2:
-            st.subheader("📏 GENOME CAPACITY (BP)")
-            fig_len = px.bar(df, x='Virus ID', y='Length (bp)', color='Molecule', 
-                              text='Length (bp)', color_discrete_sequence=cyber_colors,
-                              template="plotly_dark")
-            st.plotly_chart(fig_len, use_container_width=True)
-
-        # AI Analysis Module
-        st.divider()
-        if st.button("🧠 GENERATE INTELLIGENCE REPORT"):
-            try:
-                llm = OllamaLLM(model=final_model)
-                summary_data = df[['Virus ID', 'Molecule', 'Length (bp)', 'GC %', 'Description']].to_string(index=False)
-                prompt = f"""
-                Act as a Cyberpunk Bioinformatician. 
-                Analyze these viruses and provide a professional report in RUSSIAN. 
-                Translate the descriptions into Russian.
-                Data: {summary_data}
-                """
-                with st.spinner(f"CORE {final_model} PROCESSING..."):
-                    st.info(llm.invoke(prompt))
-            except Exception as e:
-                st.error(f"NEURAL CORE CONNECTION FAILURE: {e}")
-
-        # Dataset Export
-        fasta_data = "\n".join([f">{r['Virus ID']} {r['Description']}\n{r['Sequence']}" for _, r in df.iterrows()])
-        st.download_button("💾 DOWNLOAD DATASET (.FASTA)", data=fasta_data, file_name="biocode_export.fasta")
-else:
-    st.info("System Standby. Please select data samples and click 'EXECUTE ANALYTICS'.")
+# --- ЧАТ С МЕДЛЕННОЙ ДНК ---
+st.subheader(f"💬 CYBER-CONSULTANT ({model_name})")
+if prompt := st.chat_input("Ask about genomes..."):
+    with st.chat_message("user"): st.markdown(prompt)
+    with st.chat_message("assistant"):
+        thinking_status = st.empty()
+        thinking_status.markdown("<div class='dna-thinking'>🧬</div> *Analyzing sequences...*", unsafe_allow_html=True)
+        
+        try:
+            instruction = "You are a professional Bioinformatician. Compare viruses biologically based on the data. Avoid code."
+            data_ctx = f"Data: {str(st.session_state.virus_list)}. "
+            resp = ollama.chat(model=model_name, messages=[
+                {'role': 'system', 'content': instruction},
+                {'role': 'user', 'content': data_ctx + prompt}
+            ])
+            thinking_status.empty()
+            st.markdown(resp['message']['content'])
+        except Exception as e:
+            thinking_status.empty()
+            st.error(f"AI Error: {e}")
