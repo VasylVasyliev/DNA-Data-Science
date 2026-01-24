@@ -58,6 +58,13 @@ A specialized tool designed to identify unique regulatory motifs or genetic mark
 
 ## 📂 Project Structure
 * **`app.py`**: Main Viral Intelligence dashboard.
+<<<<<<< HEAD
 * **`Bioinformatics_Portfolio/`**: [See Legacy Scripts](Bioinformatics_Portfolio/LEGACY_README.md) — My previous Windows-based work, Rosalind scripts, and R visualizations.
 * **`analyzer.py`**: Core genomic logic for the AI Station.
 * **`bio_agent.py`**: LangChain-powered AI analyst.
+=======
+* **`Bioinformatics_Portfolio/`**: [See Legacy Scripts](./Bioinformatics_Portfolio/LEGACY_README.md) — My previous Windows-based work, Rosalind scripts, and R visualizations.
+* **`analyzer.py`**: Core genomic logic for the AI Station.
+* **`bio_agent.py`**: LangChain-powered AI analyst.
+
+>>>>>>> 54b7ec6a15041cd54c7a08c353e2c413b2858a46
