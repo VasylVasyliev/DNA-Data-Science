@@ -68,13 +68,16 @@ def calculate_hamming(seq1, seq2):
 if 'virus_list' not in st.session_state: st.session_state.virus_list = []
 if 'comparison_result' not in st.session_state: st.session_state.comparison_result = None
 
-# --- 5. БОКОВАЯ ПАНЕЛЬ ---
+# --- 5. БОКОВАЯ ПАНЕЛЬ (КОНТРОЛЬ МОДЕЛЕЙ) ---
 with st.sidebar:
     st.markdown('<h2 class="black-header">⚙️ SYSTEM CONTROL</h2>', unsafe_allow_html=True)
     try:
         models_info = ollama.list()
         model_names = [m['name'] for m in models_info['models']]
-    except: model_names = ["llama3.2:1b"]
+        if not model_names:
+            model_names = ["llama3:latest", "llama3.2:1b"]
+    except: 
+        model_names = ["llama3:latest", "llama3.2:1b"]
     
     selected_model = st.selectbox("🤖 Select AI Model:", model_names, index=0)
     st.divider()
@@ -109,8 +112,8 @@ with tab_viral:
         if st.session_state.virus_list:
             df = pd.DataFrame(st.session_state.virus_list)
             fig = px.bar(df, x="ID", y="Length", color="ID", log_y=True, template="plotly_dark", height=250)
-            st.plotly_chart(fig, use_container_width=True)
-            st.dataframe(df.drop(columns=["Sequence"]), use_container_width=True, hide_index=True)
+            st.plotly_chart(fig, width="stretch") # Обновлено для 2026
+            st.dataframe(df.drop(columns=["Sequence"]), width="stretch", hide_index=True)
 
     st.divider()
     st.markdown('<h2 class="black-header">🔍 Mutation Tracker</h2>', unsafe_allow_html=True)
@@ -167,12 +170,11 @@ with tab_md:
     
     with col_gif:
         st.subheader("Trajectory Visualization")
-        # Пытаемся загрузить GIF из корня проекта
         try:
-            st.image("./md_stability_animated.gif", use_container_width=True)
+            st.image("./md_stability_animated.gif", width="stretch") # Обновлено для 2026
             st.caption("Simulation: Interaction of EGFR with Metallic Nano-Targets (37°C)")
         except:
-            st.warning("GIF-файл не найден. Запустите generate_animation.py сначала.")
+            st.warning("GIF-файл не найден. Убедитесь, что он в корневой папке.")
 
     with col_stats:
         st.subheader("Statistical Validation")
@@ -196,7 +198,7 @@ with tab_md:
             thinking_md = st.empty()
             thinking_md.markdown("<div class='dna-thinking'>🧬</div> *Analyzing MD Trajectories...*", unsafe_allow_html=True)
             try:
-                prompt_md = f"Данные симуляции EGFR: {md_data}. Объясни, почему платина лучше золота для терапии."
+                prompt_md = f"Данные симуляции EGFR: {md_data}. Объясни научно, почему платина лучше золота для терапии."
                 resp_md = ollama.chat(model=selected_model, messages=[
                     {'role': 'system', 'content': 'You are a Structural Biologist. Use Russian.'},
                     {'role': 'user', 'content': prompt_md}
