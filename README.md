@@ -34,3 +34,4 @@ A production-grade tool combining real-time genomic data retrieval with Local AI
 * `md_stability.png` — Stability comparison graph (Au vs Pt).
 * `app.py` — Viral Intelligence dashboard.
 * `Bioinformatics_Portfolio/` — Rosalind and legacy genomic scripts.
+* [My Kaggle Profile](https://www.kaggle.com/vasylvasylievvasyl)
