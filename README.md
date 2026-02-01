@@ -11,7 +11,7 @@ This repository represents a comprehensive journey through bioinformatics—from
 * **Key Finding:** Platinum (Pt) shows a more stable binding profile (Energy: -0.838) compared to Gold (Au), with lower displacement amplitudes.
 * **Tech Stack:** OpenMM 8.4, Python 3.11, Amber14-all, Matplotlib.
 
-![Molecular Dynamics Stability](md_stability.png)
+![Molecular Dynamics Stability](Project_HeLa_Research/reports/md_stability.png)
 *Figure 1: Comparative dynamic stability of Gold (Au) and Platinum (Pt) on the EGFR surface.*
 
 ---
