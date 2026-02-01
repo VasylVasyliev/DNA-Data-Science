@@ -10,8 +10,11 @@ This repository represents a comprehensive journey through bioinformatics—from
 * **Analysis:** Evaluated dynamic stability at physiological temperature (37°C).
 * **Tech Stack:** OpenMM 8.4, Python 3.11, Amber14-all, Matplotlib.
 
-![Molecular Dynamics Stability](./md_stability_animated.gif)
-*Figure 1: Real-time dynamic stability analysis of Gold (Au) and Platinum (Pt) on the EGFR surface.*
+<p align="center">
+  <img src="./md_stability_animated.gif?raw=true" width="800px">
+  <br>
+  <i>Figure 1: Real-time dynamic stability analysis of Gold (Au) and Platinum (Pt) on the EGFR surface.</i>
+</p>
 
 ### 📊 Statistical Validation
 Based on the MD trajectory analysis, Platinum (Pt) demonstrates a significantly more favorable binding profile:
