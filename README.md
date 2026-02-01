@@ -1,118 +1,36 @@
-# 🧬 DNA Data Science: Bioinformatics & Sequence Analysis
+# 🧬 DNA Data Science & Molecular Dynamics: Bioinformatics Portfolio
 
-Repository of **14+ Rosalind solutions** and high-performance genomic data analysis tools. This portfolio demonstrates the transition from fundamental biological algorithms to optimized production-grade sequence analysis and AI-driven insights.
-
----
-
-## 🚀 FEATURED: Viral Intelligence Station (AI-Powered)
-My latest production-grade tool that combines genomic data retrieval with Local AI analysis.
-
-* **Cyberpunk UI**: Interactive dashboard for viral telemetry and sequence exploration.
-* **Neural Core**: Integrated with **Ollama (Llama 3)** for automated scientific reporting in Russian.
-* **Live Data**: Fetches real-time virus sequences from **NCBI Entrez** database.
-* **Tech Stack**: Python 3.11, Streamlit, Plotly, LangChain.
+This repository represents a comprehensive journey through bioinformatics—from algorithmic Rosalind solutions to AI-powered viral analysis and high-performance Molecular Dynamics (MD).
 
 ---
 
-## 🧬 Featured Analysis: ORF Discovery & PhiX174 Case Study
-Identification of **Open Reading Frames (ORFs)** is a critical step in gene prediction. This tool scans both strands of DNA for start and stop codons to find potential protein-coding sequences.
+## 🚀 FEATURED 2026: Nano-Interface & Protein Stability
+**Goal:** Comparative study of heavy metal (Au vs Pt) interaction stability within cellular protein targets (HeLa/EGFR models).
 
-* **PhiX174 Case Study**: Analyzed the first-ever sequenced DNA using a custom Python detector.
-* **Biological Insight**: The analysis identified **176 ORF candidates**.
-* **Visualization**: Shows a clear separation between short random sequences and real functional genes.
+* **Analysis:** Evaluated dynamic stability at physiological temperature (37°C).
+* **Key Finding:** Platinum (Pt) shows a more stable binding profile (Energy: -0.838) compared to Gold (Au), with lower displacement amplitudes.
+* **Tech Stack:** OpenMM 8.4, Python 3.11, Amber14-all, Matplotlib.
 
----
-
-## 🔍 Ultra-Fast Genomic Marker Discovery
-A specialized tool designed to identify unique regulatory motifs or genetic markers across multiple genomes.
-
-* **Fuzzy Pattern Matching**: Finds markers even with mutations ($max\_err = 1$) using a Neighborhood Search algorithm.
-* **Performance**: Reduced processing time for the PhiX174 genome from 10s to **<0.1s**.
+![Molecular Dynamics Stability](md_stability.png)
+*Figure 1: Comparative dynamic stability of Gold (Au) and Platinum (Pt) on the EGFR surface.*
 
 ---
 
-## ✅ Rosalind Challenges (14+ Tasks)
-*Located in the `/Bioinformatics_Portfolio` directory.*
+## 🤖 AI-Powered: Viral Intelligence Station
+A production-grade tool combining real-time genomic data retrieval with Local AI analysis.
+* **Neural Core:** Integrated with **Ollama (Llama 3)** for scientific reporting.
+* **Tech Stack:** Python 3.11, Streamlit, Plotly, LangChain.
 
-### 🧬 Molecular Biology & Translation
-* **INI, DNA, RNA, REVC**: Core nucleotide manipulation and transcription/translation.
-* **PROT**: Protein translation simulation.
-* **CONS**: Profile matrices and consensus sequence discovery.
-* **ORF**: Open Reading Frame detection across 6 frames.
+---
 
-### 📊 Genetics, Evolution & Probability
-* **GC**: Analysis of DNA thermal stability via Guanine-Cytosine content.
-* **HAMM**: Evolutionary distance measurement via point mutations.
-* **IPRB, IEV**: Mendelian inheritance and genotype distribution modeling.
-* **FIB, FIBD**: Population dynamics using recursive relations and mortality models.
+## 🧬 Genomic Algorithms & Rosalind
+* **ORF Discovery:** Scanning PhiX174 for Open Reading Frames (176 candidates).
+* **Rosalind Challenges:** 14+ tasks covering core molecular biology algorithms.
 
 ---
 
 ## 📂 Project Structure
-* **`app.py`**: Main Viral Intelligence dashboard.
-* **`Bioinformatics_Portfolio/`**: [See Legacy Scripts](./Bioinformatics_Portfolio/LEGACY_README.md) — My previous Windows-based work and Rosalind scripts.
-* **`analyzer.py`**: Core genomic logic for the AI Station.
-* **`bio_agent.py`**: LangChain-powered AI analyst.# 🧬 DNA Data Science: Bioinformatics & Sequence Analysis
-
-Repository of **14+ Rosalind solutions** and high-performance genomic data analysis tools. This portfolio demonstrates the transition from fundamental biological algorithms to optimized production-grade sequence analysis and AI-driven insights.
-
----
-
-## 🚀 FEATURED: Viral Intelligence Station (AI-Powered)
-My latest production-grade tool that combines genomic data retrieval with Local AI analysis.
-
-* **Cyberpunk UI**: Interactive dashboard for viral telemetry and sequence exploration.
-* **Neural Core**: Integrated with **Ollama (Llama 3)** for automated scientific reporting in Russian.
-* **Live Data**: Fetches real-time virus sequences from **NCBI Entrez** database.
-* **Tech Stack**: Python 3.11, Streamlit, Plotly, LangChain.
-
----
-
-## 🛠 Tech Stack & Methodology
-* **Languages**: Python 3.11/3.14 (Latest Features), R (ggplot2).
-* **Key Libraries**: Biopython, Ollama, Plotly, NetworkX, Matplotlib.
-* **Methodology**: Algorithm optimization ($O(N)$ complexity), neighborhood search, and memory caching.
-
----
-
-## 🧬 Featured Analysis: ORF Discovery & PhiX174 Case Study
-Identification of **Open Reading Frames (ORFs)** is a critical step in gene prediction. This tool scans both strands of DNA for start and stop codons to find potential protein-coding sequences.
-
-* **PhiX174 Case Study**: Analyzed the first-ever sequenced DNA using a custom Python detector.
-* **Biological Insight**: The analysis identified **176 ORF candidates**.
-* **Visualization**: Shows a clear separation between short random sequences and real functional genes (generally >100 amino acids).
-
----
-
-## 🔍 Ultra-Fast Genomic Marker Discovery
-A specialized tool designed to identify unique regulatory motifs or genetic markers across multiple genomes.
-
-* **Fuzzy Pattern Matching**: Finds markers even with mutations ($max\_err = 1$) using a Neighborhood Search algorithm.
-* **Performance**: Reduced processing time for the PhiX174 genome from 10s to **<0.1s**.
-* **Evolution**: Progressed from Brute Force (10.0s) to Hash Indexing (2.0s) and finally Neighborhood Search (Instant).
-
----
-
-## ✅ Rosalind Challenges (14+ Tasks)
-*Located in the `/Bioinformatics_Portfolio` directory.*
-
-### 🧬 Molecular Biology & Translation
-* **INI, DNA, RNA, REVC**: Core nucleotide manipulation and transcription/translation.
-* **PROT**: Protein translation simulation.
-* **CONS**: Profile matrices and consensus sequence discovery.
-* **ORF**: Open Reading Frame detection across 6 frames.
-
-### 📊 Genetics, Evolution & Probability
-* **GC**: Analysis of DNA thermal stability via Guanine-Cytosine content.
-* **HAMM**: Evolutionary distance measurement via point mutations.
-* **IPRB, IEV**: Mendelian inheritance and genotype distribution modeling.
-* **FIB, FIBD**: Population dynamics using recursive relations and mortality models.
-
----
-
-## 📂 Project Structure
-* **`app.py`**: Main Viral Intelligence dashboard.
-* **`Bioinformatics_Portfolio/`**: [See Legacy Scripts](./Bioinformatics_Portfolio/LEGACY_README.md) — My previous Windows-based work, Rosalind scripts, and R visualizations.
-* **`analyzer.py`**: Core genomic logic for the AI Station.
-* **`bio_agent.py`**: LangChain-powered AI analyst.
-
+* `main_md.py` — Core Molecular Dynamics simulation script.
+* `md_stability.png` — Stability comparison graph (Au vs Pt).
+* `app.py` — Viral Intelligence dashboard.
+* `Bioinformatics_Portfolio/` — Rosalind and legacy genomic scripts.
