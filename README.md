@@ -53,3 +53,5 @@ A production-grade tool combining real-time genomic data retrieval with Local AI
 
 ---
 *Last synced: 2026-02-08*
+
+![Traffic Chart](results/traffic_comparison.png)
