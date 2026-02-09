@@ -3,78 +3,76 @@ import requests
 import datetime
 import re
 import matplotlib.pyplot as plt
+from dotenv import load_dotenv
 
-# --- Конфигурация ---
-# English: Repository list and credentials
-# Russian: Список репозиториев и данные доступа
-REPOS = ["DNA-Data-Science", "HELA_Pt_Project"]
+# English: Load environment variables from .env file
+# Russian: Загружаем переменные окружения из файла .env
+load_dotenv()
+
+# English: Get token from environment, avoid hardcoding for security
+# Russian: Получаем токен из окружения, избегаем жесткой вставки для безопасности
+TOKEN = os.getenv("GITHUB_TOKEN")
 USERNAME = "VasylVasyliev"
-TOKEN = "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"
+REPOS = ["DNA-Data-Science", "HELA_Pt_Project"]
 OUTPUT_PATH = "results/traffic_comparison.png"
 
-def update_dashboard():
-    # English: Get today's date for synchronization
-    # Russian: Получаем сегодняшнюю дату для синхронизации
+# English: Debug line to check if the 'black box' works
+# Russian: Отладочная строка, чтобы проверить, работает ли «черный ящик»
+print(f"--- DEBUG: Token loaded: {'YES (Success)' if TOKEN else 'NO (Check .env file)'} ---")
+
+def get_traffic_data(repo):
+    url = f"https://api.github.com/repos/{USERNAME}/{repo}/traffic/views"
+    headers = {
+        "Authorization": f"token {TOKEN}",
+        "Accept": "application/vnd.github.v3+json"
+    }
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        return response.json()['views']
+    else:
+        print(f"⚠️ Error fetching {repo}: {response.status_code}")
+        return []
+
+def update_readme():
     today = datetime.date.today().strftime("%Y-%m-%d")
-    print(f"🚀 Starting synchronization: {today}")
-    
-    counts = []
-    headers = {"Authorization": f"token {TOKEN}"}
-
-    # 1. English: Fetch data from GitHub API
-    # 1. Russian: Получаем данные из GitHub API
-    for repo in REPOS:
-        url = f"https://api.github.com/repos/{USERNAME}/{repo}/traffic/views"
-        try:
-            response = requests.get(url, headers=headers)
-            if response.status_code == 200:
-                data = response.json()
-                counts.append(data.get('count', 0))
-            else:
-                print(f"⚠️ Error fetching {repo}: {response.status_code}")
-                counts.append(0)
-        except Exception as e:
-            print(f"❌ Connection error for {repo}: {e}")
-            counts.append(0)
-
-    # 2. English: Create chart with data labels
-    # 2. Russian: Создаем график с числовыми метками
-    plt.figure(figsize=(10, 6))
-    bars = plt.bar(REPOS, counts, color=['#4A90E2', '#50E3C2'])
-    
-    # English: Add exact numbers above each bar
-    # Russian: Добавляем точные числа над каждым столбиком
-    for bar in bars:
-        height = bar.get_height()
-        plt.text(bar.get_x() + bar.get_width()/2., height + 0.1,
-                 f'{int(height)}', ha='center', va='bottom', 
-                 fontsize=12, fontweight='bold', color='#333333')
-    
-    plt.title(f'Research Activity (Last 14 Days) - {today}', fontsize=14)
-    plt.ylabel('Total Views', fontsize=12)
-    plt.ylim(0, max(counts) * 1.2 if counts and max(counts) > 0 else 10)
-    plt.grid(axis='y', linestyle='--', alpha=0.3)
-    
-    # English: Save the visualization
-    # Russian: Сохраняем визуализацию
-    os.makedirs("results", exist_ok=True)
-    plt.savefig(OUTPUT_PATH)
-    plt.close()
-    print(f"✅ Chart saved to {OUTPUT_PATH}")
-
-    # 3. English: Update the date in README.md
-    # 3. Russian: Обновляем дату в файле README.md
-    if os.path.exists("README.md"):
-        with open("README.md", "r", encoding="utf-8") as f:
+    readme_path = "README.md"
+    if os.path.exists(readme_path):
+        with open(readme_path, "r", encoding="utf-8") as f:
             content = f.read()
         
-        # English: Regex to find and replace the date
-        # Russian: Регулярное выражение для поиска и замены даты
-        new_content = re.sub(r"Last synced: \d{4}-\d{2}-\d{2}", f"Last synced: {today}", content)
+        # English: Update the date in the README using regex
+        # Russian: Обновляем дату в README с помощью регулярного выражения
+        new_content = re.sub(r"Last Update: \d{4}-\d{2}-\d{2}", f"Last Update: {today}", content)
         
-        with open("README.md", "w", encoding="utf-8") as f:
+        with open(readme_path, "w", encoding="utf-8") as f:
             f.write(new_content)
         print(f"✅ README date updated to {today}")
 
+def plot_traffic(data_dict):
+    plt.figure(figsize=(10, 5))
+    for repo, views in data_dict.items():
+        dates = [v['timestamp'][:10] for v in views]
+        counts = [v['count'] for v in views]
+        plt.plot(dates, counts, marker='o', label=repo)
+    
+    plt.title("GitHub Traffic Comparison (2026)")
+    plt.xlabel("Date")
+    plt.ylabel("Views")
+    plt.legend()
+    plt.grid(True)
+    os.makedirs("results", exist_ok=True)
+    plt.savefig(OUTPUT_PATH)
+    print(f"✅ Chart saved to {OUTPUT_PATH}")
+
 if __name__ == "__main__":
-    update_dashboard()
+    print(f"🚀 Starting synchronization: {datetime.date.today()}")
+    
+    if not TOKEN:
+        print("❌ CRITICAL ERROR: GITHUB_TOKEN not found in .env!")
+    else:
+        all_data = {}
+        for repo in REPOS:
+            all_data[repo] = get_traffic_data(repo)
+        
+        plot_traffic(all_data)
+        update_readme()
