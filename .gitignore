@@ -1,1 +1,20 @@
+# Секреты
 .env
+
+# Системные файлы macOS
+.DS_Store
+
+# Python (временные файлы и кэш)
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+.venv
+env/
+
+# Данные и отчеты (если они весят много)
+*.fasta
+*.pdb
+reports/*.png
+!reports/docking_energy_plot.png.env
