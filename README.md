@@ -11,9 +11,9 @@ This repository represents a comprehensive journey through bioinformatics—from
 Targeted modeling of a 100-atom Silver cluster interacting with the **EGFR L858R** mutation (PDB: 4I22), a key driver in HeLa cell proliferation.
 
 <p align="center">
-  <img src="./4I22_EGFR_L858R_Silver100.png" width="600px">
+  <img src="./reports/docking_energy_plot.png" width="600px">
   <br>
-  <i>Figure 1: Targeted docking of a silver nanoparticle (white sphere) into the ATP-binding pocket of mutant EGFR (red zone).</i>
+  <i>Figure 1: Targeted docking analysis of metal nanoparticles into the ATP-binding pocket of mutant EGFR.</i>
 </p>
 
 * **Target:** EGFR kinase domain (L858R mutation site).
@@ -36,8 +36,9 @@ Statistical validation of binding energies at physiological temperature (37°C) 
 ## 🤖 AI-Powered: Viral Intelligence Station
 A production-grade tool combining real-time genomic data retrieval with Local AI analysis.
 
-* **Neural Core:** Integrated with **Ollama (Llama 3)** for scientific reporting.
-* **Tech Stack:** Python 3.11, Streamlit, Plotly, LangChain.
+* **Neural Core:** Integrated with **Ollama (Llama 3 / Gemma 2)** for scientific reporting.
+* **Main UI:** `app.py` (Streamlit-based Cyber-Station).
+* **Tech Stack:** Python 3.11, Streamlit, Plotly, BioPython.
 
 ---
 
@@ -47,16 +48,17 @@ A production-grade tool combining real-time genomic data retrieval with Local AI
 
 ---
 
-## 📂 Project Structure
-* `4I22_EGFR_L858R_Silver100.png` — Final high-resolution Ag-docking render.
-* `EGFR_Ag_Study.pse` — PyMOL session file for silver docking analysis.
-* `main_md.py` — Core Molecular Dynamics simulation script.
-* `results/traffic_comparison.png` — Repository traffic analytics chart.
+## 📂 Project Structure (v1.0)
+* `app.py` — **Core Interface v1.0** (Locked Feb 13, 2026).
+* `data/EGFR_Ag_Study.pse` — PyMOL session file for silver docking analysis.
+* `reports/docking_energy_plot.png` — Final interaction visualization.
+* `scripts/python/` — Specialized MD and protein analysis scripts.
+* `results/plots/` — Statistical output and XRD comparisons.
 
 ---
 📊 **Check out my live experiments on [Kaggle](https://www.kaggle.com/vasylvasylievvasyl)**
 
 ---
-*Last synced: 2026-02-12*
+*Last synced: 2026-02-13 (v1.0 Release)*
 
-![Traffic Chart](results/traffic_comparison.png)
+![Traffic Chart](results/plots/platinum_xrd.png)
